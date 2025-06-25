@@ -1,0 +1,91 @@
+GPT CHAT: https://chatgpt.com/c/685b1e9c-7ab0-8000-b9ed-f024fc463dae
+https://chatgpt.com/share/685be5a1-65d4-8000-9aab-5d261147eb7e
+
+CONECTIONS:
+
+Main Server Formats
+
+Type server:
+
+{
+  "type": "register",
+  "role": "server",
+  "ip": "1.2.3.4"
+}
+
+response:
+{
+  "type": "register_response",
+  "uuid": "generated-uuid-string"
+}
+
+
+Type client
+
+{
+  "type": "register",
+  "role": "client",
+  "ip": "5.6.7.8"
+}
+
+response:
+{
+  "type": "register_response",
+  "uuid": "generated-uuid-string"
+}
+
+
+Request ip (only clients)
+
+{
+  "type": "get_ip",
+  "target": "uuid-or-domain",
+  "requester": "client-uuid"
+}
+
+response:
+{
+  "type": "get_ip_response",
+  "ip": "1.2.3.4"
+}
+
+
+Mini Server Format:
+
+Handshake:
+
+{
+  "sender": "1.2.3.4",
+  "request": "handshake",
+  "message": "connect"
+}
+
+
+response: 
+{
+  "message": "accept"
+}
+{
+  "message": "refuse"
+}
+
+
+Ask Data:
+{
+  "sender": "1.2.3.4",
+  "request": "get",
+  "message": "index.html"
+}
+
+return:
+
+{
+  "code": 404,
+  "message": "not found"
+}
+
+
+{
+  "code": 200,
+  "message": "<html><head></head><body><h1>hi</h1></body></html>"
+}
