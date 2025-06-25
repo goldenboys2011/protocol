@@ -2,6 +2,11 @@ import os
 import socket
 import threading
 import json
+import ssl
+import public_ip
+
+CERT_FILE = "cert.pem"
+KEY_FILE = "key.pem"
 
 def handle_client(conn, addr):
     print(f"[+] Connection from {addr}")
@@ -26,10 +31,8 @@ def handle_client(conn, addr):
                 requested_file = request.get("message", "")
                 base_path = "fileSystem"
 
-                # Prevent path traversal like "../../../etc/passwd"
                 safe_path = os.path.normpath(os.path.join(base_path, requested_file))
 
-                # Ensure the requested file stays within base_path
                 if not safe_path.startswith(base_path):
                     response = {
                         "code": 403,
@@ -63,16 +66,27 @@ def handle_client(conn, addr):
     print(f"[-] Disconnected {addr}")
     conn.close()
 
-def start_server(host="0.0.0.0", port=9001):
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, port))
-    server.listen()
 
-    print(f"[SERVER] Listening on {host}:{port}")
 
-    while True:
-        conn, addr = server.accept()
-        threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
+
+def start_server():
+    global context
+    context.load_cert_chain(certfile="cert.pem", keyfile="key.pem")
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(('0.0.0.0', 9001))
+        sock.listen()
+
+        with context.wrap_socket(sock, server_side=True) as ssock:
+            print("Server listening on port 9001")
+            while True:
+                conn, addr = ssock.accept()
+                threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
+
 
 if __name__ == "__main__":
+    bigserver_sock = None
+    publicIp = public_ip.get()
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     start_server()

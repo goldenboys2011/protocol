@@ -1,4 +1,21 @@
 {
-  "nodes": [
-  ]
+  "domains": {
+    "gboogle.yab": {
+      "ip": "127.0.0.1",
+      "secret": "goldensSuperAdvanceSecretKeyDontWorryAboutItLoL:P",
+      "@": [
+        {"type": "A", "content": "127.0.0.1"},
+        {"type": "TXT", "content": "Yo Internet"}
+      ],
+      "subdomain": [
+        {"type": "A", "content": "127.0.0.1"}
+      ],
+      "subdomain2": [
+        {"type": "A", "content": "127.0.0.1"}
+      ],
+      "dev": [
+        {"type": "A", "content": "127.0.0.2"}
+      ]
+    }
+  }
 }
