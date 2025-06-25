@@ -48,5 +48,5 @@ def askServerForIp(uuid):
 
 if __name__ == "__main__":
     ClientUUid = ""
-    ip = askServerForIp("irn")
+    #ip = askServerForIp("irn")
     connectToPeer("37.27.51.34", 9001)
