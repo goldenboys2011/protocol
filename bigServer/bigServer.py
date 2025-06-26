@@ -4,7 +4,7 @@ import socket
 import threading
 import json
 import ssl
-
+from httpsServer import runHttpsServer
 CERT_FILE = "cert.pem"
 KEY_FILE = "key.pem"
 MAP_FILE = "map.json"
@@ -93,18 +93,28 @@ def handle_client(conn, addr):
 
 def start_server():
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(certfile="cert.pem", keyfile="key.pem")
+    context.load_cert_chain(certfile=CERT_FILE, keyfile=KEY_FILE)
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(('0.0.0.0', 9002))
         sock.listen()
+        print("Big server listening on port 9002")
 
-        with context.wrap_socket(sock, server_side=True) as ssock:
-            print("Big server listening on port 9002")
-            while True:
-                conn, addr = ssock.accept()
-                threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
+        while True:
+            try:
+                raw_conn, addr = sock.accept()
+                try:
+                    conn = context.wrap_socket(raw_conn, server_side=True)
+                    threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
+                except ssl.SSLError as ssl_err:
+                    print(f"[!] SSL error during handshake from {addr}: {ssl_err}")
+                    raw_conn.close()
+            except Exception as e:
+                print(f"[!] Error accepting connection: {e}")
+
 
 
 if __name__ == "__main__":
+    threading.Thread(target=runHttpsServer, daemon=True).start()
     start_server()
+    

@@ -40,7 +40,7 @@ def askServerForIp(server, type):
     global publicIp
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with context.wrap_socket(s, server_hostname="192.0.0.1") as sc:
-            sc.connect(("127.0.0.1", 9002))
+            sc.connect(("37.27.51.34", 9001))
 
             getServer = {
                 "sender": publicIp,
@@ -72,7 +72,7 @@ def askServerForIp(server, type):
 if __name__ == "__main__":
     context = ssl._create_unverified_context()
     publicIp = public_ip.get()
-    Serverip = askServerForIp("gboogle.yab", "dns")
+    Serverip = askServerForIp("odysseas.chryssos", "dns")
     #connectToPeer("37.27.51.34", 9001)
     if Serverip != None:
         print(Serverip)

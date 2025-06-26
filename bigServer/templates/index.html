@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Big DNS Manager</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
+    input, button { margin: 0.5em 0; padding: 0.5em; width: 100%; }
+    .domain { margin: 1em 0; padding: 1em; border: 1px solid #ccc; border-radius: 8px; }
+    .record { margin-left: 1em; font-size: 0.9em; color: #333; }
+    #logout { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Big DNS Manager</h1>
+
+  <div id="auth-section">
+    <h2>Login or Register</h2>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="main-section" style="display:none;">
+    <h2>Welcome, <span id="currentUser"></span></h2>
+    <input id="domainName" placeholder="New domain (e.g. example.yab)">
+    <button onclick="createDomain()">Create Domain</button>
+    
+    <h3>Your Domains</h3>
+    <div id="domainList"></div>
+
+    <button id="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    function showMain() {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('main-section').style.display = 'block';
+      document.getElementById('currentUser').textContent = currentUser;
+      loadDomains();
+    }
+
+    function logout() {
+      currentUser = null;
+      location.reload();
+    }
+
+    function register() {
+      fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        })
+      }).then(res => res.json()).then(data => {
+        alert(data.message || data.error);
+      });
+    }
+
+    function login() {
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        })
+      }).then(res => res.json()).then(data => {
+        if (data.user) {
+          currentUser = data.user;
+          showMain();
+        } else {
+          alert(data.error);
+        }
+      });
+    }
+
+    function createDomain() {
+      const domain = document.getElementById('domainName').value;
+      const ip = prompt("Enter IP address for domain's A record:");
+      if (!ip) return;
+
+      fetch('/domains?user=' + currentUser, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain, ip })
+      }).then(res => res.json()).then(data => {
+        alert(data.message || data.error);
+        loadDomains();
+      });
+    }
+
+    function loadDomains() {
+      fetch('/domains?user=' + currentUser)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById('domainList');
+          list.innerHTML = '';
+          for (const [domain, info] of Object.entries(data)) {
+            const div = document.createElement('div');
+            div.className = 'domain';
+            let subrecords = '';
+            for (const [key, records] of Object.entries(info)) {
+              if (["secret", "ip"].includes(key)) continue;
+              subrecords += `<div class="record"><strong>${key}</strong>: ${JSON.stringify(records)}</div>`;
+            }
+
+            div.innerHTML = `
+              <strong>${domain}</strong><br>
+              Secret: <code>${info.secret}</code><br>
+              <button onclick="editDomain('${domain}')">Edit</button>
+              <button onclick="deleteDomain('${domain}')">Delete</button>
+              ${subrecords}
+            `;
+            list.appendChild(div);
+          }
+        });
+    }
+
+    function deleteDomain(domain) {
+      fetch('/domains/' + domain + '?user=' + currentUser, {
+        method: 'DELETE'
+      }).then(res => res.json()).then(data => {
+        alert(data.message || data.error);
+        loadDomains();
+      });
+    }
+
+    function editDomain(domain) {
+      const action = prompt(`Edit ${domain}: 
+1. Add/Edit main A record
+2. Add/Edit main TXT record
+3. Add/Edit subdomain
+4. Add/Edit subdomain TXT
+Enter number:`);
+
+      if (!action) return;
+
+      const type = parseInt(action);
+      let payload = {};
+
+      if (type === 1) {
+        const ip = prompt("Enter new IP for main A record:");
+        if (!ip) return;
+        payload = { type: "A", content: ip, subdomain: "@" };
+      } else if (type === 2) {
+        const txt = prompt("Enter TXT content for main domain:");
+        if (!txt) return;
+        payload = { type: "TXT", content: txt, subdomain: "@" };
+      } else if (type === 3) {
+        const sub = prompt("Subdomain name (e.g. dev):");
+        const ip = prompt("IP for subdomain:");
+        if (!sub || !ip) return;
+        payload = { type: "A", content: ip, subdomain: sub };
+      } else if (type === 4) {
+        const sub = prompt("Subdomain name:");
+        const txt = prompt("TXT content for subdomain:");
+        if (!sub || !txt) return;
+        payload = { type: "TXT", content: txt, subdomain: sub };
+      } else {
+        alert("Invalid choice.");
+        return;
+      }
+
+      fetch(`/domains/${domain}/records?user=${currentUser}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(res => res.json()).then(data => {
+        alert(data.message || data.error);
+        loadDomains();
+      });
+    }
+  </script>
+</body>
+</html>
