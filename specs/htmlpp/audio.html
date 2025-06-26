@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <link rel="stylesheet" href="/css/default.css">
+  <title>Oro Specifications - Home</title>
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>Oro Specifications</h2>
+    <a href="../index.html">Home</a>
+
+    <a href="../protocol/index.html" class="sidebar-section-title">Protocol</a>
+    <!-- Only Visible inside /protocol pages
+    <a href="../lua/dns.html" class="sidebar-subpage">DNS Communication</a>
+    -->
+    
+    <a href="../htmlpp/index.html" class="sidebar-section-title">HTML++</a>
+    <a href="../htmlpp/a.html" class="sidebar-subpage">A</a>
+    <a href="../htmlpp/audio.html" class="sidebar-subpage">Audio</a>
+    <a href="../htmlpp/body.html" class="sidebar-subpage">Body</a>
+    <a href="../htmlpp/button.html" class="sidebar-subpage">Button</a>
+    <a href="../htmlpp/div.html" class="sidebar-subpage">Div</a>
+    <a href="../htmlpp/h1-6.html" class="sidebar-subpage">H1-6</a>
+    <a href="../htmlpp/hr.html" class="sidebar-subpage">HR</a>
+    <a href="../htmlpp/html.html" class="sidebar-subpage">Html</a>
+    <a href="../htmlpp/img.html" class="sidebar-subpage">Img</a>
+    <a href="../htmlpp/input.html" class="sidebar-subpage">Input</a>
+    <a href="../htmlpp/li.html" class="sidebar-subpage">Li</a>
+    <a href="../htmlpp/link.html" class="sidebar-subpage">Link</a>
+    <a href="../htmlpp/meta.html" class="sidebar-subpage">Meta</a>
+    <a href="../htmlpp/ol.html" class="sidebar-subpage">OL</a>
+    <a href="../htmlpp/option.html" class="sidebar-subpage">Option</a>
+    <a href="../htmlpp/p.html" class="sidebar-subpage">P</a>
+    <a href="../htmlpp/script.html" class="sidebar-subpage">Script</a>
+    <a href="../htmlpp/select.html" class="sidebar-subpage">Select</a>
+    <a href="../htmlpp/textarea.html" class="sidebar-subpage">Textarea</a>
+    <a href="../htmlpp/title.html" class="sidebar-subpage">Title</a>
+    <a href="../htmlpp/ul.html" class="sidebar-subpage">UL</a>
+    
+    <a href="../lua/index.html" class="sidebar-section-title">Lua</a>
+    <!-- Only Visible inside /lua pages
+    <a href="../lua/element.html" class="sidebar-subpage">Element</a>
+    <a href="../lua/fetch.html" class="sidebar-subpage">Fetch</a>
+    <a href="../lua/get.html" class="sidebar-subpage">Get</a>
+    <a href="../lua/print.html" class="sidebar-subpage">Print</a>
+    <a href="../lua/window.html" class="sidebar-subpage">Window</a>
+    <a href="../lua/setinterval.html" class="sidebar-subpage">SetInterval</a>
+    <a href="../lua/clearinterval.html" class="sidebar-subpage">ClearInterval</a>
+    -->
+  </nav>
+
+<main class="content">
+  <h1 id="audio">Audio</h1>
+  <p>An audio player.<br> Self-closing.<br> Note: Unlike html, the controls are always shown.</p>
+  <div class="language-html highlighter-rouge">
+    <div class="highlight">
+      <pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
+  ...
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;audio</span> <span class="na">src=</span><span class="s">"&lt;url&gt;"</span><span class="nt">&gt;</span>
+    ...
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre>
+    </div>
+    <button type="button" aria-label="Copy code to clipboard">
+      <svg viewBox="0 0 24 24" class="copy-icon"><use xlink:href="#svg-copy"></use></svg>
+    </button>
+  </div>
+
+  <h2 id="content">Content</h2>
+  <p>None</p>
+
+  <h2 id="attributes">Attributes</h2>
+  <ul>
+    <li>Class - classes it has</li>
+    <li>Src - the source of the audio</li>
+  </ul>
+
+  <h2 id="support">Support</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th style="text-align: center">Napture</th>
+          <th style="text-align: center">Bussinga</th>
+          <th style="text-align: center">YAB</th>
+          <th style="text-align: center">WXV</th>
+          <th style="text-align: center">WXB</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>supported</td>
+          <td style="text-align: center">None</td>
+          <td style="text-align: center">Unknown</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">Full</td>
+          <td style="text-align: center">Full</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+
+  <script>
+    // Auto highlight active sidebar link
+    const currentPath = location.pathname.split('/').pop() || 'index.html';
+    const sidebarLinks = document.querySelectorAll('nav.sidebar a[href]');
+    sidebarLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  </script>
+</body>
+</html>
